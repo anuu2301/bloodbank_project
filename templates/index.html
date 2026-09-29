@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Blood Donors Directory - BloodBank Connect{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+  <div>
+    <h2 class="fw-bold mb-0 text-dark"><i class="fa-solid fa-users text-danger me-2"></i>Blood Donors Directory</h2>
+    <p class="text-muted small mb-0">Search and connect with volunteer donors in your region</p>
+  </div>
+  <a href="/add" class="btn btn-blood">
+    <i class="fa-solid fa-user-plus me-1"></i> + Add Donor
+  </a>
+</div>
+
+<!-- Search & Filter Card -->
+<div class="card card-modern p-4 mb-4">
+  <form method="get" action="/donors" class="row g-2 align-items-center">
+    <div class="col-md-8">
+      <div class="input-group">
+        <span class="input-group-text bg-white"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+        <input type="text" name="group" class="form-control" placeholder="Search blood group (e.g. O+, A-, B+)" value="{{ selected_group or '' }}">
+        <button class="btn btn-dark px-4" type="submit">Search</button>
+        {% if selected_group %}
+          <a href="/donors" class="btn btn-outline-secondary">Clear</a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="d-flex flex-wrap gap-1 justify-content-md-end">
+        {% for grp in ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] %}
+          <a href="/donors?group={{ grp | urlencode }}" class="badge text-decoration-none {% if selected_group == grp %}bg-danger text-white{% else %}bg-light text-dark border{% endif %} p-2">
+            {{ grp }}
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- Donors Table -->
+<div class="card card-modern p-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="fw-bold mb-0 text-dark">Registered Donors</h5>
+    <span class="badge bg-secondary">{{ donors | length }} Donors Listed</span>
+  </div>
+
+  {% if donors %}
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Name</th>
+          <th>Blood Group</th>
+          <th>Phone</th>
+          <th>City</th>
+          <th class="text-end">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for d in donors %}
+        <tr>
+          <td class="fw-semibold">
+            <i class="fa-regular fa-circle-user text-muted me-2"></i>{{ d.name }}
+          </td>
+          <td>
+            <span class="blood-badge" style="width: 38px; height: 38px; font-size: 0.95rem;">
+              {{ d.blood_group }}
+            </span>
+          </td>
+          <td>
+            {% if d.phone %}
+              <a href="tel:{{ d.phone }}" class="text-decoration-none text-dark">
+                <i class="fa-solid fa-phone text-success me-1"></i> {{ d.phone }}
+              </a>
+            {% else %}
+              <span class="text-muted small">Not provided</span>
+            {% endif %}
+          </td>
+          <td>
+            <i class="fa-solid fa-location-dot text-muted me-1"></i> {{ d.city or '—' }}
+          </td>
+          <td class="text-end">
+            <a href="/delete/{{ d.id }}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to remove {{ d.name }}?');">
+              <i class="fa-solid fa-trash-can me-1"></i> Delete
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="text-center py-5 text-muted">
+    <i class="fa-solid fa-user-slash fa-3x text-muted mb-3 opacity-50"></i>
+    <h6>No Donors Found{% if selected_group %} for group "{{ selected_group }}"{% endif %}</h6>
+    <p class="small text-muted mb-3">Be the first to add a donor for this blood group.</p>
+    <a href="/add" class="btn btn-blood btn-sm">+ Add Donor</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

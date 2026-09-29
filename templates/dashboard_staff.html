@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}Staff Operations Dashboard - BloodBank Connect{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+  <div>
+    <span class="badge badge-role badge-staff mb-1">Blood Bank Operations</span>
+    <h2 class="fw-bold mb-0 text-dark">Staff Operations Desk</h2>
+    <p class="text-muted small mb-0">Manage daily blood intake, patient request approvals, and donor appointments</p>
+  </div>
+</div>
+
+<!-- Blood Inventory Adjustment Panel -->
+<div class="card card-modern p-4 mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="fw-bold mb-0"><i class="fa-solid fa-boxes-stacked text-danger me-2"></i>Inventory Control Center</h5>
+    <small class="text-muted">Direct stock adjustment</small>
+  </div>
+  <div class="row g-3">
+    {% for s in stocks %}
+    <div class="col-6 col-md-3">
+      <div class="p-3 border rounded-3 text-center bg-white shadow-sm">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="blood-badge">{{ s.blood_group }}</span>
+          <span class="badge {% if s.units_available > 10 %}bg-success-subtle text-success{% elif s.units_available > 3 %}bg-warning-subtle text-warning-emphasis{% else %}bg-danger-subtle text-danger{% endif %}">
+            {{ s.units_available }} in stock
+          </span>
+        </div>
+        <div class="d-flex justify-content-center gap-2 mt-2">
+          <form action="/stock/update" method="POST" class="d-inline">
+            <input type="hidden" name="blood_group" value="{{ s.blood_group }}">
+            <input type="hidden" name="delta" value="1">
+            <button type="submit" class="btn btn-sm btn-outline-success px-3" title="Add 1 Unit">
+              <i class="fa-solid fa-plus me-1"></i> Add
+            </button>
+          </form>
+          <form action="/stock/update" method="POST" class="d-inline">
+            <input type="hidden" name="blood_group" value="{{ s.blood_group }}">
+            <input type="hidden" name="delta" value="-1">
+            <button type="submit" class="btn btn-sm btn-outline-danger px-3" title="Remove 1 Unit">
+              <i class="fa-solid fa-minus me-1"></i> Deduct
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Pending Patient Blood Requests -->
+<div class="card card-modern p-4 mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h5 class="fw-bold mb-0 text-danger">
+        <i class="fa-solid fa-hand-holding-medical me-2"></i>Pending Patient Blood Requests
+      </h5>
+      <p class="text-muted small mb-0">Requires screening and stock allocation</p>
+    </div>
+    <span class="badge bg-danger rounded-pill">{{ pending_requests | length }} Pending</span>
+  </div>
+
+  {% if pending_requests %}
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Req #</th>
+          <th>Patient Name</th>
+          <th>Hospital</th>
+          <th>Group</th>
+          <th>Units</th>
+          <th>Urgency</th>
+          <th>Reason</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for req in pending_requests %}
+        <tr>
+          <td><span class="text-muted fw-bold">#{{ req.id }}</span></td>
+          <td class="fw-semibold">{{ req.patient_name }}</td>
+          <td><i class="fa-solid fa-hospital text-muted me-1"></i> {{ req.hospital_name }}</td>
+          <td><span class="blood-badge" style="width: 34px; height: 34px; font-size: 0.95rem;">{{ req.blood_group }}</span></td>
+          <td><strong>{{ req.units_requested }}</strong> Unit(s)</td>
+          <td>
+            {% if req.urgency == 'Critical' %}
+              <span class="badge bg-danger"><i class="fa-solid fa-bolt me-1"></i> Critical</span>
+            {% elif req.urgency == 'Urgent' %}
+              <span class="badge bg-warning text-dark"><i class="fa-solid fa-triangle-exclamation me-1"></i> Urgent</span>
+            {% else %}
+              <span class="badge bg-secondary">Normal</span>
+            {% endif %}
+          </td>
+          <td class="small text-muted text-truncate" style="max-width: 180px;">{{ req.reason or 'Standard supply' }}</td>
+          <td>
+            <div class="btn-group btn-group-sm">
+              <a href="/request/status/{{ req.id }}/Approved" class="btn btn-success" title="Approve & Deduct Stock">
+                <i class="fa-solid fa-check me-1"></i> Approve
+              </a>
+              <a href="/request/status/{{ req.id }}/Rejected" class="btn btn-outline-danger" title="Reject Request">
+                <i class="fa-solid fa-xmark"></i>
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="text-center py-4 text-muted">
+    <i class="fa-solid fa-circle-check fa-3x text-success mb-2"></i>
+    <p class="mb-0">No pending blood requests! All incoming requests have been processed.</p>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Scheduled Donor Appointments -->
+<div class="card card-modern p-4 mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h5 class="fw-bold mb-0 text-success">
+        <i class="fa-solid fa-calendar-check me-2"></i>Donor Donation Appointments
+      </h5>
+      <p class="text-muted small mb-0">Verify donor attendance and record collected blood units</p>
+    </div>
+  </div>
+
+  {% if appointments %}
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Appt #</th>
+          <th>Donor</th>
+          <th>Group</th>
+          <th>Date & Time</th>
+          <th>Center</th>
+          <th>Status</th>
+          <th>Operations</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in appointments %}
+        <tr>
+          <td><span class="text-muted fw-bold">#{{ a.id }}</span></td>
+          <td class="fw-semibold">{{ a.donor_name }}</td>
+          <td><span class="badge bg-danger-subtle text-danger fw-bold fs-6">{{ a.blood_group }}</span></td>
+          <td>{{ a.appointment_date }} <span class="small text-muted">({{ a.preferred_time or 'Morning' }})</span></td>
+          <td class="small">{{ a.center_location }}</td>
+          <td>
+            {% if a.status == 'Completed' %}
+              <span class="badge bg-success"><i class="fa-solid fa-check-double me-1"></i> Completed</span>
+            {% elif a.status == 'Approved' %}
+              <span class="badge bg-primary">Confirmed</span>
+            {% elif a.status == 'Cancelled' %}
+              <span class="badge bg-danger">Cancelled</span>
+            {% else %}
+              <span class="badge bg-warning text-dark">Pending</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if a.status == 'Pending' %}
+              <a href="/appointment/status/{{ a.id }}/Approved" class="btn btn-sm btn-outline-primary me-1">
+                Confirm
+              </a>
+            {% endif %}
+            {% if a.status != 'Completed' and a.status != 'Cancelled' %}
+              <a href="/appointment/status/{{ a.id }}/Completed" class="btn btn-sm btn-success" title="Collect Blood & Add to Stock">
+                <i class="fa-solid fa-droplet me-1"></i> Mark Donated (+1 Unit)
+              </a>
+            {% else %}
+              <span class="text-muted small">Finalized</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="text-center py-4 text-muted">
+    <i class="fa-regular fa-calendar-xmark fa-3x mb-2 text-secondary"></i>
+    <p class="mb-0">No donation appointments scheduled yet.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

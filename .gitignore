@@ -1,0 +1,21 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments
+.venv/
+env/
+venv/
+ENV/
+
+# Database (optional: keep or remove depending on whether you want fresh db on deploy)
+instance/
+*.sqlite3
+
+# IDE / OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

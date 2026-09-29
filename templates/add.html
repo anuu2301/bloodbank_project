@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Add New Blood Donor - BloodBank Connect{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-7 col-lg-6">
+    <div class="card card-modern p-4 p-md-5 shadow-sm">
+      <div class="d-flex align-items-center mb-4">
+        <a href="/donors" class="btn btn-outline-secondary btn-sm me-3 rounded-circle" style="width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center;">
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <div>
+          <h3 class="fw-bold mb-0 text-dark">Add New Donor</h3>
+          <p class="text-muted small mb-0">Record a new volunteer blood donor in the directory</p>
+        </div>
+      </div>
+
+      <form method="POST" action="/add">
+        <div class="mb-3">
+          <label class="form-label fw-semibold small text-secondary">Donor Full Name</label>
+          <div class="input-group">
+            <span class="input-group-text bg-light"><i class="fa-regular fa-user text-muted"></i></span>
+            <input type="text" name="name" class="form-control" placeholder="e.g. Michael Scott" required autofocus>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold small text-secondary">Blood Group</label>
+          <div class="input-group">
+            <span class="input-group-text bg-light"><i class="fa-solid fa-droplet text-danger"></i></span>
+            <select name="blood_group" class="form-select" required>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+              <option value="O+" selected>O+</option>
+              <option value="O-">O-</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold small text-secondary">Contact Phone Number</label>
+          <div class="input-group">
+            <span class="input-group-text bg-light"><i class="fa-solid fa-phone text-muted"></i></span>
+            <input type="text" name="phone" class="form-control" placeholder="e.g. +1 555-0182">
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label fw-semibold small text-secondary">City / Location</label>
+          <div class="input-group">
+            <span class="input-group-text bg-light"><i class="fa-solid fa-city text-muted"></i></span>
+            <input type="text" name="city" class="form-control" placeholder="e.g. Scranton">
+          </div>
+        </div>
+
+        <div class="d-flex gap-2">
+          <a href="/donors" class="btn btn-light w-50 py-2">Cancel</a>
+          <button type="submit" class="btn btn-blood w-50 py-2">
+            <i class="fa-solid fa-floppy-disk me-1"></i> Save Donor
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

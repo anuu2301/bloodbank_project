@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}Donor Hub - BloodBank Connect{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+  <div>
+    <span class="badge badge-role badge-donor mb-1">Voluntary Life Saver</span>
+    <h2 class="fw-bold mb-0 text-dark">Donor Command Hub</h2>
+    <p class="text-muted small mb-0">Track your appointments, view donation history, and schedule your next gift of life</p>
+  </div>
+  <button class="btn btn-blood" data-bs-toggle="modal" data-bs-target="#scheduleModal">
+    <i class="fa-solid fa-calendar-plus me-1"></i> Schedule Donation Appointment
+  </button>
+</div>
+
+<div class="row g-4 mb-4">
+  <!-- Digital Donor Card -->
+  <div class="col-lg-5">
+    <div class="card p-4 text-white rounded-4 shadow" style="background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%);">
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+          <div class="text-uppercase small tracking-wide opacity-75">Certified Blood Donor Card</div>
+          <h4 class="fw-bold mb-0">{{ user.full_name }}</h4>
+          <small class="opacity-75">ID: BD-{{ '%04d' % user.id }}</small>
+        </div>
+        <div class="bg-white text-danger fw-extrabold rounded-3 px-3 py-2 text-center shadow-sm">
+          <div style="font-size: 1.4rem; line-height: 1;">{{ user.blood_group or 'O+' }}</div>
+          <small class="text-dark fw-semibold" style="font-size: 0.65rem;">BLOOD TYPE</small>
+        </div>
+      </div>
+
+      <div class="row g-2 mt-2 pt-2 border-top border-white-50 small">
+        <div class="col-6">
+          <span class="opacity-75">Phone:</span>
+          <div class="fw-semibold">{{ user.phone or 'Not provided' }}</div>
+        </div>
+        <div class="col-6">
+          <span class="opacity-75">City:</span>
+          <div class="fw-semibold">{{ user.city or 'Metropolis' }}</div>
+        </div>
+        <div class="col-6 mt-2">
+          <span class="opacity-75">Total Donations:</span>
+          <div class="fw-bold fs-6">{{ completed_count }} Times</div>
+        </div>
+        <div class="col-6 mt-2">
+          <span class="opacity-75">Donor Status:</span>
+          <div class="fw-bold"><i class="fa-solid fa-circle-check text-warning me-1"></i> Active Donor</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Eligibility Guidelines -->
+    <div class="card card-modern p-4 mt-3">
+      <h6 class="fw-bold text-dark mb-3"><i class="fa-solid fa-notes-medical text-danger me-2"></i>Quick Eligibility Checklist</h6>
+      <ul class="list-unstyled small mb-0 d-flex flex-column gap-2 text-secondary">
+        <li><i class="fa-solid fa-check text-success me-2"></i> Age between 18 and 65 years.</li>
+        <li><i class="fa-solid fa-check text-success me-2"></i> Weight at least 50 kg (110 lbs).</li>
+        <li><i class="fa-solid fa-check text-success me-2"></i> Hemoglobin level is 12.5 g/dL minimum.</li>
+        <li><i class="fa-solid fa-check text-success me-2"></i> Minimum 56 days between whole blood donations.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Appointments & History -->
+  <div class="col-lg-7">
+    <div class="card card-modern p-4 h-100">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold mb-0 text-dark"><i class="fa-solid fa-clock-rotate-left text-danger me-2"></i>My Donation Appointments</h5>
+        <span class="badge bg-light text-secondary border">{{ appointments | length }} records</span>
+      </div>
+
+      {% if appointments %}
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Date</th>
+              <th>Center Location</th>
+              <th>Units</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for appt in appointments %}
+            <tr>
+              <td>
+                <div class="fw-semibold">{{ appt.appointment_date }}</div>
+                <small class="text-muted">{{ appt.preferred_time or 'Morning slot' }}</small>
+              </td>
+              <td class="small">{{ appt.center_location }}</td>
+              <td><strong>{{ appt.units }}</strong> Bag</td>
+              <td>
+                {% if appt.status == 'Completed' %}
+                  <span class="badge bg-success"><i class="fa-solid fa-check-circle me-1"></i> Completed</span>
+                {% elif appt.status == 'Approved' %}
+                  <span class="badge bg-primary">Confirmed</span>
+                {% elif appt.status == 'Cancelled' %}
+                  <span class="badge bg-secondary">Cancelled</span>
+                {% else %}
+                  <span class="badge bg-warning text-dark">Under Review</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="text-center py-5 text-muted">
+        <i class="fa-solid fa-hand-holding-medical fa-3x text-danger opacity-50 mb-3"></i>
+        <h6 class="fw-bold">No Donation History Yet</h6>
+        <p class="small text-muted mb-3">Schedule your first appointment today and be a hero to someone in need.</p>
+        <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#scheduleModal">
+          Schedule Now
+        </button>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Schedule Appointment -->
+<div class="modal fade" id="scheduleModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold"><i class="fa-solid fa-calendar-plus text-danger me-2"></i>Schedule Blood Donation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="/donor/book-appointment" method="POST">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Donor Name & Blood Group</label>
+            <input type="text" class="form-control" value="{{ user.full_name }} ({{ user.blood_group }})" readonly disabled>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Preferred Donation Date</label>
+            <input type="date" name="appointment_date" class="form-control" required min="{{ datetime_now or '' }}">
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Preferred Time Slot</label>
+            <select name="preferred_time" class="form-select" required>
+              <option value="09:00 AM - 11:00 AM">Morning (09:00 AM - 11:00 AM)</option>
+              <option value="11:00 AM - 01:00 PM">Midday (11:00 AM - 01:00 PM)</option>
+              <option value="02:00 PM - 04:00 PM">Afternoon (02:00 PM - 04:00 PM)</option>
+              <option value="04:00 PM - 06:00 PM">Evening (04:00 PM - 06:00 PM)</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Blood Donation Center</label>
+            <select name="center_location" class="form-select" required>
+              <option value="Central Blood Bank - Downtown Center">Central Blood Bank - Downtown Center</option>
+              <option value="Metropolitan Red Cross Donation Hub">Metropolitan Red Cross Donation Hub</option>
+              <option value="Eastside Memorial Blood Drive">Eastside Memorial Blood Drive</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-blood">Confirm Booking</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

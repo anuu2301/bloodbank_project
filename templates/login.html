@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In - BloodBank Connect{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-5">
+    
+    <div class="card card-modern p-4 p-md-5 mb-4 shadow-sm">
+      <div class="text-center mb-4">
+        <div class="d-inline-flex p-3 rounded-circle bg-danger-subtle text-danger mb-2">
+          <i class="fa-solid fa-droplet fa-2x"></i>
+        </div>
+        <h3 class="fw-bold text-dark">Welcome Back</h3>
+        <p class="text-muted small">Sign in to your role-based dashboard</p>
+      </div>
+
+      <form method="POST" action="/login">
+        <div class="mb-3">
+          <label class="form-label fw-semibold small text-secondary">Username or Email</label>
+          <div class="input-group">
+            <span class="input-group-text bg-light"><i class="fa-regular fa-user text-muted"></i></span>
+            <input type="text" name="username" id="loginUsername" class="form-control" placeholder="e.g. admin or donor" required autofocus>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label fw-semibold small text-secondary">Password</label>
+          <div class="input-group">
+            <span class="input-group-text bg-light"><i class="fa-solid fa-lock text-muted"></i></span>
+            <input type="password" name="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-blood w-100 py-2 fs-6 mb-3">
+          <i class="fa-solid fa-right-to-bracket me-2"></i> Sign In
+        </button>
+
+        <div class="text-center">
+          <span class="text-muted small">Don't have an account? </span>
+          <a href="/register" class="fw-semibold text-danger small">Create an account</a>
+        </div>
+      </form>
+    </div>
+
+    <!-- Quick Demo Accounts One-Click Fill -->
+    <div class="card card-modern p-3 border-dashed">
+      <p class="small text-muted fw-bold mb-2 text-uppercase text-center">
+        <i class="fa-solid fa-wand-magic-sparkles text-warning me-1"></i> Quick Demo Login Fill
+      </p>
+      <div class="row g-2">
+        <div class="col-6">
+          <button type="button" class="btn btn-outline-warning w-100 btn-sm text-start" onclick="fillDemo('admin', 'admin123')">
+            <i class="fa-solid fa-shield-halved me-1"></i> <strong>Admin</strong>
+            <div class="text-muted" style="font-size: 0.7rem;">admin / admin123</div>
+          </button>
+        </div>
+        <div class="col-6">
+          <button type="button" class="btn btn-outline-info w-100 btn-sm text-start" onclick="fillDemo('staff', 'staff123')">
+            <i class="fa-solid fa-user-nurse me-1"></i> <strong>Staff</strong>
+            <div class="text-muted" style="font-size: 0.7rem;">staff / staff123</div>
+          </button>
+        </div>
+        <div class="col-6">
+          <button type="button" class="btn btn-outline-success w-100 btn-sm text-start" onclick="fillDemo('donor', 'donor123')">
+            <i class="fa-solid fa-hand-holding-heart me-1"></i> <strong>Donor</strong>
+            <div class="text-muted" style="font-size: 0.7rem;">donor / donor123</div>
+          </button>
+        </div>
+        <div class="col-6">
+          <button type="button" class="btn btn-outline-primary w-100 btn-sm text-start" onclick="fillDemo('patient', 'patient123')">
+            <i class="fa-solid fa-hospital-user me-1"></i> <strong>Patient</strong>
+            <div class="text-muted" style="font-size: 0.7rem;">patient / patient123</div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function fillDemo(username, password) {
+    document.getElementById('loginUsername').value = username;
+    document.getElementById('loginPassword').value = password;
+  }
+</script>
+{% endblock %}

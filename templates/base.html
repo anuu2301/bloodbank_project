@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}BloodBank Connect - Life Saver Portal{% endblock %}</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+  <!-- Google Fonts: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-red: #d32f2f;
+      --deep-crimson: #b71c1c;
+      --soft-rose: #ffebee;
+      --accent-dark: #1e293b;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #f8fafc;
+      color: #334155;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .navbar-blood {
+      background: linear-gradient(135deg, var(--deep-crimson) 0%, var(--primary-red) 100%);
+      box-shadow: 0 4px 14px rgba(183, 28, 28, 0.25);
+    }
+
+    .navbar-brand {
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      font-size: 1.35rem;
+    }
+
+    .nav-link {
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .nav-link:hover {
+      transform: translateY(-1px);
+    }
+
+    .card-modern {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card-modern:hover {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+    }
+
+    .blood-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 1.15rem;
+      background: #fee2e2;
+      color: #dc2626;
+      border: 1px solid #fca5a5;
+    }
+
+    .badge-role {
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .badge-admin { background-color: #fef3c7; color: #b45309; }
+    .badge-staff { background-color: #e0e7ff; color: #4338ca; }
+    .badge-donor { background-color: #dcfce7; color: #15803d; }
+    .badge-patient { background-color: #f3e8ff; color: #7e22ce; }
+
+    .btn-blood {
+      background-color: var(--primary-red);
+      color: white;
+      font-weight: 600;
+      border-radius: 8px;
+      padding: 8px 18px;
+      transition: background 0.2s ease;
+    }
+    .btn-blood:hover {
+      background-color: var(--deep-crimson);
+      color: white;
+    }
+
+    footer {
+      margin-top: auto;
+      background-color: #ffffff;
+      border-top: 1px solid #e2e8f0;
+      padding: 24px 0;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-blood sticky-top">
+    <div class="container">
+      <a class="navbar-brand text-white" href="/">
+        <i class="fa-solid fa-droplet text-warning me-2"></i>BloodBank <span class="fw-light opacity-75">Connect</span>
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navMain">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link text-white" href="/"><i class="fa-solid fa-chart-pie me-1"></i> Overview</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="/donors"><i class="fa-solid fa-users me-1"></i> Donor Directory</a>
+          </li>
+          {% if session.get('user_id') %}
+            <li class="nav-item">
+              <a class="nav-link text-white fw-bold" href="/dashboard">
+                <i class="fa-solid fa-gauge-high me-1"></i> My Dashboard
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+
+        <div class="d-flex align-items-center gap-2">
+          {% if session.get('user_id') %}
+            <span class="text-white me-2">
+              <i class="fa-regular fa-user-circle me-1"></i> {{ session.get('full_name') }}
+              <span class="badge badge-role badge-{{ session.get('user_role') }} ms-1">{{ session.get('user_role') }}</span>
+            </span>
+            <a href="/logout" class="btn btn-outline-light btn-sm px-3 rounded-pill">
+              <i class="fa-solid fa-arrow-right-from-bracket me-1"></i> Logout
+            </a>
+          {% else %}
+            <a href="/login" class="btn btn-light btn-sm fw-semibold px-3 rounded-pill shadow-sm">
+              <i class="fa-solid fa-right-to-bracket me-1"></i> Login
+            </a>
+            <a href="/register" class="btn btn-outline-light btn-sm fw-semibold px-3 rounded-pill">
+              <i class="fa-solid fa-user-plus me-1"></i> Register
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Flash Messages -->
+  <div class="container mt-3">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, msg in messages %}
+          <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show shadow-sm" role="alert">
+            <i class="fa-solid fa-circle-info me-2"></i> {{ msg }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <!-- Main Content Block -->
+  <main class="container my-4">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container text-center text-md-between d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+      <div>
+        <i class="fa-solid fa-heart-pulse text-danger me-1"></i> <strong>BloodBank Connect</strong> &bull; Every drop counts.
+      </div>
+      <div class="small">
+        <a href="/donors" class="text-decoration-none text-muted me-3">Donors</a>
+        <a href="/add" class="text-decoration-none text-muted me-3">Add Donor</a>
+        <a href="/login" class="text-decoration-none text-muted">Portal Login</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap 5 Bundle JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

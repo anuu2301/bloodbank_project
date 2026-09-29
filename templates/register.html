@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Create an Account - BloodBank Connect{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="card card-modern p-4 p-md-5 mb-4 shadow-sm">
+      <div class="text-center mb-4">
+        <h3 class="fw-bold text-dark">Join BloodBank Connect</h3>
+        <p class="text-muted small">Register to donate blood or request life-saving units</p>
+      </div>
+
+      <form method="POST" action="/register">
+        
+        <!-- Role Selection -->
+        <label class="form-label fw-bold small text-secondary">I want to register as:</label>
+        <div class="row g-2 mb-4">
+          <div class="col-6">
+            <input type="radio" class="btn-check" name="role" id="roleDonor" value="donor" checked>
+            <label class="btn btn-outline-danger w-100 py-2 d-flex flex-column align-items-center" for="roleDonor">
+              <i class="fa-solid fa-hand-holding-heart fa-lg mb-1"></i>
+              <span class="fw-bold">Blood Donor</span>
+              <small class="opacity-75" style="font-size: 0.75rem;">I want to donate blood</small>
+            </label>
+          </div>
+          <div class="col-6">
+            <input type="radio" class="btn-check" name="role" id="rolePatient" value="patient">
+            <label class="btn btn-outline-primary w-100 py-2 d-flex flex-column align-items-center" for="rolePatient">
+              <i class="fa-solid fa-hospital-user fa-lg mb-1"></i>
+              <span class="fw-bold">Patient / Requester</span>
+              <small class="opacity-75" style="font-size: 0.75rem;">I need blood supply</small>
+            </label>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="form-label fw-semibold small text-secondary">Full Name</label>
+            <input type="text" name="full_name" class="form-control" placeholder="e.g. Jane Doe" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold small text-secondary">Blood Group</label>
+            <select name="blood_group" class="form-select" required>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+              <option value="O+" selected>O+</option>
+              <option value="O-">O-</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="form-label fw-semibold small text-secondary">Username</label>
+            <input type="text" name="username" class="form-control" placeholder="janedoe" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold small text-secondary">Email Address</label>
+            <input type="email" name="email" class="form-control" placeholder="jane@example.com" required>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="form-label fw-semibold small text-secondary">Phone Number</label>
+            <input type="text" name="phone" class="form-control" placeholder="+1 555-0199" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold small text-secondary">City / Region</label>
+            <input type="text" name="city" class="form-control" placeholder="Metropolis" required>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label fw-semibold small text-secondary">Create Password</label>
+          <input type="password" name="password" class="form-control" placeholder="••••••••" required minlength="4">
+        </div>
+
+        <button type="submit" class="btn btn-blood w-100 py-2 fs-6 mb-3">
+          <i class="fa-solid fa-user-plus me-2"></i> Complete Registration
+        </button>
+
+        <div class="text-center">
+          <span class="text-muted small">Already have an account? </span>
+          <a href="/login" class="fw-semibold text-danger small">Sign in</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
